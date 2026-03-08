@@ -1,13 +1,15 @@
 #importamos libreria thinter
 import tkinter as tk
-def selstepper():
-    whsmu = entrada.get().strip()  #Lee lo que esta escrito en la caja
-    if whsmu == "":
-        resultado.config(text=f"Porfavor escriba un SMU correcto")
-    elif whsmu not in ("2450","2400"):
-        resultado.config(text=f"Porfavor escriba un SMU correcto (2450 o 2400)")        
+
+from tkinter import ttk
+def selSMUstepper():
+    whSMU = selection_SMU.get().strip()
+
+    if whSMU not in ("2400","2450"):
+        resultado.config(text="Elija un SMU configurable")
     else:
-        resultado.config(text=f"SMU seleccionado: {whsmu}")
+        resultado.config(text=f"SMU seleccionado como stepper: {whSMU}")
+    
     
 ###Ventana principal
 window = tk.Tk()
@@ -18,13 +20,23 @@ window.geometry("1800x920")
 etiquetawhSMU = tk.Label(window, text="¿Que SMU sera tu stepper?")
 etiquetawhSMU.pack(pady=10)
 
-#Caja de texto
-entrada = tk.Entry(window, width=30)
-entrada.pack(pady=30)
+selection_SMU=tk.StringVar()
 
-#Boton de seleccion de SMU
-SelecSMU = tk.Button(window, text="SMU", command=selstepper)
-SelecSMU.pack(pady=50)
+#combobox de seleccion de SMU
+menu_step=ttk.Combobox(
+    window,
+    textvariable = selection_SMU,
+    values = ["2400","2450"],
+    state = "readonly",
+    width=20
+)
+menu_step.pack(pady=20)
+menu_step.set("Selecciona un SMU")
+
+#Boton
+boton_step=tk.Button(window,text="Seleccionar SMU stepper", command=selSMUstepper)
+boton_step.pack(pady=30)
+
 
 resultado = tk.Label(window, text="")
 resultado.pack(pady=60)
