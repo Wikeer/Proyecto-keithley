@@ -1,5 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+import mplcursors
+
 
 
 def validar_numero(texto):
@@ -106,16 +110,103 @@ def window_creation(recursos):
 
     sweeper_current_limit=ttk.Entry(window,validate="key",validatecommand=(vcmd,"%P"))
     sweeper_current_limit.place(x=400,y=250)
+    ########### GRAFICAS ###########
+    frame_grafica_curvas_entrada=tk.LabelFrame(window, text="Curvas de entrada",width=550,height=400)
+    frame_grafica_curvas_entrada.place(x=800,y=420)
+
+    frame_grafica_curvas_salida=tk.LabelFrame(window, text="Curvas de salida",width=550,height=400)
+    frame_grafica_curvas_salida.place(x=800,y=20)
+    ##############LABEL GRAFICAS#############
+    label_entrada=tk.Label(window,text="Seleccione un punto para ver sus valores",anchor="w")
+    label_entrada.place(x=800,y=0)
+    ##############Figuras Graficas########
+    fig_salida=Figure(figsize=(5, 3.8), dpi=100)
+    ax_salida= fig_salida.add_subplot(111)
+    ax_salida.set_title("Curvas de salida")
+    ax_salida.set_xlabel("VDS")
+    ax_salida.set_ylabel("IDS")
+    ax_salida.grid(True)
+
+    fig_entrada=Figure(figsize=(5, 3.8), dpi=100)
+    ax_entrada= fig_entrada.add_subplot(111)
+    ax_entrada.set_title("Curvas de transferencia / Transconductuales")
+    ax_entrada.set_xlabel("VGS")
+    ax_entrada.set_ylabel("IGS")
+    ax_entrada.grid(True)
+    ################Canvas salida################
+    canvas_salida=FigureCanvasTkAgg(fig_salida, master=frame_grafica_curvas_salida)
+    canvas_salida.draw()
+    canvas_salida.get_tk_widget().pack(fill="both",expand=True)
+
+    canvas_entrada=FigureCanvasTkAgg(fig_entrada,master=frame_grafica_curvas_entrada)
+    canvas_entrada.draw()
+    canvas_entrada.get_tk_widget().pack(fill="both",expand=True)
+    ######Datos a graficar######
+        #Salida
+
+
+        #Entrada
+
+
     # Resultado
     #resultado = ttk.Label(window, text="")
     #resultado.place(x=10, y=250)
 
     # Botón
-    #def mostrar_valor():
-    #    valor = entrada.get()
-    #    resultado.config(text=f"Valor: {valor}")
+    def ejecutar_barrido():
+        smu_stepper = menu_stepper.get()
+        smu_sweeper = menu_sweeper.get()
 
-    #boton = ttk.Button(window, text="Mostrar valor", command=mostrar_valor)
-    #boton.place(x=10, y=210)
+        puntos = entrynp.get()
+        nplc = NLPC.get()
+        delay = SourceMeasureDelay.get()
+
+        step_points = stepper_points.get()
+        v_step_ini = stepper_Start.get()
+        v_step_fin = stepper_end.get()
+        i_lim_step = stepper_current_limit.get()
+
+        v_sweep_ini = sweeper_start.get()
+        v_sweep_fin = sweeper_end.get()
+        i_lim_sweep = sweeper_current_limit.get()
+
+        Comon_data_config=[puntos,nplc,delay]
+        stepper_data_config=[smu_stepper,step_points,v_step_fin,v_step_fin,i_lim_step]
+        sweeper_data_config=[smu_sweeper,v_sweep_ini,v_sweep_fin,i_lim_sweep]
+
+        print("Stepper:", smu_stepper)
+        print("Sweeper:", smu_sweeper)
+        print("Puntos:", puntos)
+
+        # aquí mandas llamar tu función real de barrido
+        # x_salida, y_salida, x_entrada, y_entrada = funcion_barrido(...)
+
+        # ejemplo de prueba
+        data_salida=sweep(Comon_data_config,stepper_data_config,sweeper_data_config)
+        
+
+        # actualizar gráficas
+        ax_salida.clear()
+        ax_salida.set_title("Curvas de salida")
+        ax_salida.set_xlabel("VDS")
+        ax_salida.set_ylabel("IDS")
+        ax_salida.grid(True)
+        linea_salida, = ax_salida.plot(x_salida, y_salida, marker="o")
+        canvas_salida.draw()
+
+        ax_entrada.clear()
+        ax_entrada.set_title("Curvas de transferencia / Transconductuales")
+        ax_entrada.set_xlabel("VGS")
+        ax_entrada.set_ylabel("IGS")
+        ax_entrada.grid(True)
+        linea_entrada, = ax_entrada.plot(x_entrada, y_entrada, marker="o")
+        canvas_entrada.draw()
+
+        # cursores interactivos
+        mplcursors.cursor(linea_salida, hover=False)
+        mplcursors.cursor(linea_entrada, hover=False)
+
+    boton_go = ttk.Button(window, text="Go", command=ejecutar_barrido)
+    boton_go.place(x=400, y=320)
 
     return window
