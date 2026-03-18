@@ -7,15 +7,6 @@ import pyvisa
 import tkinter as tk
 from tkinter import tkk
 
-def listar_recursos(rm):
-    recursos = rm.list_resources()
-    print("Recursos VISA detectados:")
-    if not recursos:
-        print("  No se detectaron recursos.")
-    else:
-        for i, r in enumerate(recursos, 1):
-            print(f"  {i}. {r}")
-    return recursos
 
 ###Ventana principal
 window = tk.Tk()
