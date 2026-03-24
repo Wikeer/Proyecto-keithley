@@ -3,7 +3,7 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import mplcursors
-
+from sweep import barrer_voltaje
 
 
 def validar_numero(texto):
@@ -171,7 +171,7 @@ def window_creation(recursos):
         i_lim_sweep = sweeper_current_limit.get()
 
         Comon_data_config=[puntos,nplc,delay]
-        stepper_data_config=[smu_stepper,step_points,v_step_fin,v_step_fin,i_lim_step]
+        stepper_data_config=[smu_stepper,step_points,v_step_ini,v_step_fin,i_lim_step]
         sweeper_data_config=[smu_sweeper,v_sweep_ini,v_sweep_fin,i_lim_sweep]
 
         print("Stepper:", smu_stepper)
